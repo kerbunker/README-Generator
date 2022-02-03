@@ -76,9 +76,72 @@ const questions = [
         }
     },
     {
+        type: 'list',
+        name: 'license',
+        message: "Choose a license for your project.",
+        choices: [ 'GNU', 'Mozilla', 'Apache', 'MIT', 'Boost', 'None']
+    },
+    {
+        type: 'confirm',
+        name: 'confirmContribute',
+        message: 'Would you like to add any instructions for contributing to your project?',
+        default: false
+    },
+    {
+        type: 'input',
+        name: 'contribute',
+        message: 'Enter any contributing instructions',
+        when: ({ confirmContribute }) => {
+            if (confirmContribute) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    },
+    {
+        type: 'confirm',
+        name: 'confirmTests',
+        message: 'Would you like to add any instructions for running tests you included with your project?',
+        default: false
+    },
+    {
+        type: 'input',
+        name: 'testing',
+        message: 'Enter any testing instructions',
+        when: ({ confirmTests }) => {
+            if (confirmTests) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    },
+    {
         type: 'input',
         name: 'github',
-        message: "What is your GitHub username? (required)"
+        message: "What is your GitHub username? (required)",
+        validate: githubInput => {
+            if (githubInput) {
+                return true;
+            } else {
+                console.log("Please enter your gihub username");
+                return false;
+            }
+        }
+    },
+    {
+        type: 'input',
+        name: 'email',
+        message: "What is your email address? (required)",
+        validate: emailInput => {
+            if (emailInput) {
+                return true;
+            } else {
+                console.log("Please enter your email");
+                return false;
+            }
+        }
     }
 ];
 const promptUser = () => {
@@ -89,7 +152,17 @@ const promptUser = () => {
 function writeToFile(fileName, data) {}
 
 // TODO: Create a function to initialize app
-function init() {}
+function init() {
+    inquirer
+    .prompt(questions)
+    .then((data) => {
+        return generateMarkdown(data);
+    })
+    .then((markdownData) => writeToFile(markdownData))
+    .catch(err => {
+        throw err;
+    });
+};
 
 // Function call to initialize app
 init();
