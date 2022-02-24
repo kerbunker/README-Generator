@@ -58,64 +58,27 @@ const questions = [
         }
     },
     {
-        type: 'confirm',
-        name: 'confirmCredit',
-        message: 'Would you like to credit any others for work on your project?',
-        default: false
-    },
-    {
         type: 'input',
         name: 'credit',
-        message: 'Enter any credit information you would like to provide',
-        when: ({ confirmCredit }) => {
-            if (confirmCredit) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+        message: 'Enter any credit information you would like to provide'
     },
     {
         type: 'list',
         name: 'license',
         message: "Choose a license for your project.",
-        choices: [ 'GNU', 'Mozilla', 'Apache', 'MIT', 'Boost', 'None']
+        choices: [ 'GNU', 'Apache', 'MIT', 'None']
     },
     {
         type: 'confirm',
-        name: 'confirmContribute',
-        message: 'Would you like to add any instructions for contributing to your project?',
-        default: false
-    },
-    {
-        type: 'input',
-        name: 'contribute',
-        message: 'Enter any contributing instructions',
-        when: ({ confirmContribute }) => {
-            if (confirmContribute) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    },
-    {
-        type: 'confirm',
-        name: 'confirmTests',
-        message: 'Would you like to add any instructions for running tests you included with your project?',
+        name: 'confirmTest',
+        message: 'Would you like to enter any testing data?',
         default: false
     },
     {
         type: 'input',
         name: 'testing',
         message: 'Enter any testing instructions',
-        when: ({ confirmTests }) => {
-            if (confirmTests) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+        when: (answer) => (answer.confirmTest)
     },
     {
         type: 'input',
@@ -144,21 +107,21 @@ const questions = [
         }
     }
 ];
-const promptUser = () => {
-    return inquirer.prompt(questions)
-}
 
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
+function writeToFile(fileName, data) {
+    fs.writeFileSync(fileName, data);
+    console.log("Your README for has been created");
+}
 
 // TODO: Create a function to initialize app
 function init() {
     inquirer
     .prompt(questions)
     .then((data) => {
-        return generateMarkdown(data);
+        let fileData = generateMarkdown(data);
+        writeToFile('./dist/README.md', fileData);
     })
-    .then((markdownData) => writeToFile(markdownData))
     .catch(err => {
         throw err;
     });
